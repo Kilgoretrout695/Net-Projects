@@ -1,0 +1,97 @@
+Public Class frmCourseSelection
+
+    Inherits System.Windows.Forms.Form
+
+    Public myCaller As frmUsername
+    Dim courses1() As courses 'defining "as courses" tells this dimension to follow a specific order 
+
+    Structure courses
+        'structure is used to define the order in which items will be read from the text file
+        Dim coursecode As String
+        Dim coursenum As Integer
+        Dim coursename As String
+
+    End Structure
+
+    Private Sub btnSearch_Click(sender As Object, e As EventArgs) Handles btnSearch.Click
+        Dim query = From cour In courses1
+                    Where cour.coursenum > 99
+                    Order By cour.coursenum Ascending
+                    Select cour.coursecode, cour.coursenum, cour.coursename
+        lstCourseSelection.Items.Clear()
+        For Each learn In query
+            lstCourseSelection.Items.Add(learn.coursecode & " " & learn.coursenum & " " & learn.coursename)
+        Next
+
+    End Sub
+
+    Private Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
+        Dim schedule(lstSelectedCourse.Items.Count - 1) As String
+        For i As Integer = 0 To lstSelectedCourse.Items.Count - 1
+            schedule(i) = lstSelectedCourse.Items(i)
+
+        Next
+        Dim query = From crs In schedule
+                    Let tmp As String = " "
+                    Select tmp, crs
+
+        frmSchedule1.DataGridView1.DataSource = query.ToList
+        frmSchedule1.DataGridView1.RowHeadersVisible = False
+        frmSchedule1.DataGridView1.Columns.RemoveAt(1)
+        'frmSchedule1.DataGridView1.Width = 
+
+
+        Me.Close()
+        frmSchedule1.Show()
+    End Sub
+
+    Private Sub frmCourseSelection_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Dim classes() As String = IO.File.ReadAllLines("Courses.txt")
+        Dim n As Integer = classes.Count - 1
+        ReDim courses1(n)
+        Dim line As String
+        Dim data() As String   'hold data for a single course
+        For i As Integer = 0 To n
+            line = classes(i)
+            data = line.Split(","c)
+            courses1(i).coursecode = data(0)
+            courses1(i).coursenum = CInt(data(1))
+            courses1(i).coursename = data(2)
+        Next
+
+    End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        If lstSelectedCourse.SelectedIndex >= 0 Then
+            lstSelectedCourse.Items.RemoveAt(lstSelectedCourse.SelectedIndex)
+        End If
+
+    End Sub
+
+    Private Sub lstCourseSelection_SelectedIndexChanged_1(sender As Object, e As EventArgs) Handles lstCourseSelection.SelectedIndexChanged
+        'adds selected items to a new listbox
+        'need to research how to save these items to a text file
+        Dim pickme As String = lstCourseSelection.SelectedItem & "," & " "
+
+        lstSelectedCourse.Items.Add(pickme)
+        'The function below creates a new text file in a specified location and saves whatever options are clicked
+        'I plan on adding a secondary button to recall anything written into this file
+
+        'Commented out because we need to match text file with user name that was created 
+        'My.Computer.FileSystem.WriteAllText(username, pickme, True)
+    End Sub
+
+    Private Sub btnClearAll_Click(sender As Object, e As EventArgs) Handles btnClearAll.Click
+        lstSelectedCourse.Items.Clear()
+    End Sub
+
+    Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
+        Me.Close()
+        frmUsername.Close()
+    End Sub
+
+    Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+        Me.Close()
+        frmUsername.Show()
+    End Sub
+End Class
