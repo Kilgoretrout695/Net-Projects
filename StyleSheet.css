@@ -1,0 +1,10 @@
+﻿body {
+}
+.label, .textbox {
+    text-align: left;
+    float: left;
+    display: inline;
+   font-family:'Times New Roman', Times, serif;
+   color:black;
+   font-size:medium;
+}
