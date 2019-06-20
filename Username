@@ -1,0 +1,61 @@
+Imports System.Windows
+
+Public Class frmUsername
+    Structure courses
+        'structure is used to define the order in which items will be read from the text file
+        Dim coursecode As String
+        Dim coursenum As Integer
+        Dim coursename As String
+
+    End Structure
+    'Dim username As String
+    Dim courses1() As courses 'defining "as courses" tells this dimension to follow a specific order 
+    Public username As String
+
+
+
+    Public Sub Button2_Click(sender As Object, e As EventArgs) Handles btnUsername.Click
+        'this sub writes out a user name as first initial and last name
+        'then a text file is created bearing the username
+        'this file will be recalled later
+        Dim writing As String = TextBox1.Text
+        Dim s As Integer = writing.IndexOf(" ")
+        Dim s1 As Integer = s + 1
+        Dim t As Integer = writing.Length - s1
+        username = writing.Substring(0, 1) & writing.Substring(s1, t)
+        MessageBox.Show(username, "This is your Username")
+        Dim file As System.IO.StreamWriter
+        file = My.Computer.FileSystem.OpenTextFileWriter(username, True)
+        file.WriteLine()
+        file.Close()
+        btnNext.Focus()
+
+    End Sub
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        Dim classes() As String = IO.File.ReadAllLines("Courses.txt")
+        Dim n As Integer = classes.Count - 1
+        ReDim courses1(n)
+        Dim line As String
+        Dim data() As String   'hold data for a single course
+        For i As Integer = 0 To n
+            line = classes(i)
+            data = line.Split(","c)
+            courses1(i).coursecode = data(0)
+            courses1(i).coursenum = CInt(data(1))
+            courses1(i).coursename = data(2)
+
+        Next
+
+    End Sub
+
+    Private Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
+        frmCourseSelection.Show()
+
+    End Sub
+
+    Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
+        Me.Close()
+    End Sub
+End Class
