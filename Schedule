@@ -1,0 +1,47 @@
+'Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
+
+Public Class frmSchedule1
+    Inherits System.Windows.Forms.Form
+
+    Public myCaller As frmUsername
+    Public mycaller1 As frmCourseSelection
+
+    Structure schedule1
+        Dim schedulecourse As String
+    End Structure
+
+    Private Bitmap As Bitmap
+
+    Private Sub btnPrint_Click(sender As Object, e As EventArgs) Handles btnPrint.Click
+        Dim height As Integer = DataGridView1.Height
+        DataGridView1.Height = DataGridView1.RowCount * DataGridView1.RowTemplate.Height
+        Bitmap = New Bitmap(Me.DataGridView1.Width, Me.DataGridView1.Height)
+        DataGridView1.DrawToBitmap(Bitmap, New Rectangle(0, 0, Me.DataGridView1.Width, Me.DataGridView1.Height))
+        PrintPreviewDialog1.Document = PrintDocument1
+        PrintPreviewDialog1.PrintPreviewControl.Zoom = 1
+        PrintPreviewDialog1.ShowDialog()
+        DataGridView1.Height = height
+    End Sub
+
+    Private Sub PrintDocument1_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles PrintDocument1.PrintPage
+        e.Graphics.DrawImage(Bitmap, 0, 0)
+       
+        Dim rectPrint As RectangleF = e.PageSettings.PrintableArea
+        If Me.DataGridView1.Height = rectPrint.Height > 0 Then e.HasMorePages = True
+
+    End Sub
+
+
+    Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
+        Me.Close()
+        frmCourseSelection.Close()
+        frmUsername.Close()
+    End Sub
+
+    Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+        Me.Close()
+        frmCourseSelection.Show()
+    End Sub
+
+
+End Class
